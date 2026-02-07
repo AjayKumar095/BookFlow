@@ -39,9 +39,9 @@ def get_authors():
             "current_balance": current_balance
         })
     
-    return jsonify(authors_data)    
+    return jsonify(authors_data), 200    
 
-@app.route('/author/<int:author_id>', methods=["GET"])
+@app.route('/authors/<int:author_id>', methods=["GET"])
 def get_author_details(author_id):
     try:
         author = Author.query.get_or_404(author_id)
@@ -77,11 +77,34 @@ def get_author_details(author_id):
             "current_balance": current_balance,
             "total_books": len(books),
             "books": books_data
-        })
+        }), 200
     
     except Exception:
         return jsonify({"error": str("404 Not Found")}), 404  
+
+@app.route('/authors/<int:author_id>/sales', methods=["GET"])
+def get_author_sales(author_id):
+    try:
+        author = Author.query.get_or_404(author_id)
+        books = Book.query.filter_by(author_id=author_id).all()
+        sales_data = []
+        
+        for book in books:
+            sales = Sale.query.filter_by(book_id=book.id).all()
+            for sale in sales:
+                sales_data.append({
+                    "book_title": book.title,
+                    "quantity": sale.quantity,
+                    "sale_date": sale.sale_date,
+                    "royalty_earned": sale.quantity * book.royalty_per_sale
+                })
+        
+        sales_data.sort(key=lambda x: x["sale_date"], reverse=True)
+        return jsonify(sales_data), 200        
+        
     
+    except Exception:
+        return jsonify({"error": str("404 Not Found")}), 404  
             
 
 if __name__ == '__main__':
