@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
 from datetime import datetime
 from flask_cors import CORS
-from config import Config
-from models import db, Author, Book, Sale, Withdrawal
+from bookflow.config import Config
+from bookflow.models import db, Author, Book, Sale, Withdrawal
 
 ## Set up flask app 
 app = Flask(__name__)
