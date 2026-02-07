@@ -52,18 +52,18 @@ This project simulates a real-world **author royalty and payout system** used in
 
 BookFlow/
 │
-├── bookflow/                # Main application package
-│   ├── app.py               # Main Flask app + API routes
-│   ├── models.py            # Database models
-│   ├── config.py            # Database configuration
-│   ├── init_db.py           # One-time database initialization
-│   ├── seed_data.py              # Seed data insertion
-│   └── database.db          # SQLite database file
+├── bookflow/
+│   ├── app.py
+│   ├── models.py
+│   ├── config.py
+│   ├── init_db.py
+│   ├── seed.py
+│   └── database.db
 │
 ├── requirements.txt
 └── README.md
-├── LICENSE
-└── .gitignore
+
+
 
 ## ⚙ Setup Commands
 
@@ -71,143 +71,195 @@ BookFlow/
 ```bash
 git clone https://github.com/AjayKumar095/BookFlow.git
 cd BookFlow
-
-
+```
+### 2️⃣ Create Virtual Environment
+```bash
 python -m venv .venv
+```
+### 3️⃣Activate Environmnent
+``` bash
 .venv\Scripts\activate  # windows
-
 source .venv/bin/activate # linux/mac
-
+```
+### 4️⃣Install Requirements
+``` bash
 pip install -r requirements.txt
+```
+### 5️⃣Project Initiate Commands
+```bash
 python bookflow/init_db.py
 
 python bookflow/seed.py
 
 python bookflow/app.py
-gunicorn bookflow.app:app
 ```
+### 🌍 API Use Cases & Endpoints
+```bash
+BASE URL http://127.0.0.1:5000
+```
+### 🔗 API's Endpoints
+* GET /authors
+```bash
+# Use Case
+# Retrieve all authors with their total earnings and current wallet balance.
 
-🌍 API Use Cases & Endpoints
-🔹 Get All Authors
+# Response Fields
+[
+    {
+        "current_balance": 2825,
+        "id": 1,
+        "name": "Priya Sharma",
+        "total_earnings": 3825
+    },
+    {
+        "current_balance": 9975,
+        "id": 2,
+        "name": "Rahul Verma",
+        "total_earnings": 9975
+    },
+    {
+        "current_balance": 400,
+        "id": 3,
+        "name": "Anita Desai",
+        "total_earnings": 400
+    }
+]
+```
+* GET /authors/{id}
+``` bash
+# Use Case
+# View complete author profile including books, sales performance, and royalty earnings.
 
-Endpoint
+# Response Fields
 
-GET /authors
+# Success
+# tested for /authors/3
+{
+    "books": [
+        {
+            "id": 6,
+            "royalty_per_sale": 40,
+            "title": "Garden of Words",
+            "total_royalty": 400,
+            "total_sold": 10
+        }
+    ],
+    "current_balance": 400,
+    "email": "anita@email.com",
+    "id": 3,
+    "name": "Anita Desai",
+    "total_books": 1,
+    "total_earnings": 400
+}
 
+# Error
+# in case author not found
 
-Use Case
-Retrieve all authors with their total earnings and current wallet balance.
+{
+    "error": "404 Not Found"
+}
+```
+* GET /authors/{id}/sales
+```bash
+# Use Case
+# Track all sales transactions for an author across all their books, sorted by the latest sale.
 
-Response Fields
+# Response Fields
 
-id
+# Success
+# tested for /authors/1/sales
+[
+    {
+        "book_title": "The Silent River",
+        "quantity": 40,
+        "royalty_earned": 1800,
+        "sale_date": "2025-01-12"
+    },
+    {
+        "book_title": "Midnight in Mumbai",
+        "quantity": 15,
+        "royalty_earned": 900,
+        "sale_date": "2025-01-08"
+    },
+    {
+        "book_title": "The Silent River",
+        "quantity": 25,
+        "royalty_earned": 1125,
+        "sale_date": "2025-01-05"
+    }
+]
 
-name
+# Error
+# in case author not found
 
-total_earnings
-
-current_balance
-
-🔹 Get Single Author Details
-
-Endpoint
-
-GET /authors/{id}
-
-
-Use Case
-View complete author profile including books, sales performance, and royalty earnings.
-
-Includes
-
-Author profile
-
-Book list
-
-Royalty per book
-
-Sales totals
-
-Total earnings
-
-Wallet balance
-
-Error
-
-404 if author not found
-
-🔹 Get Author Sales History
-
-Endpoint
-
-GET /authors/{id}/sales
-
-
-Use Case
-Track all sales transactions for an author across all their books, sorted by latest sale.
-
-Fields
-
-book_title
-
-quantity
-
-royalty_earned
-
-sale_date
-
-🔹 Create Withdrawal Request
-
-Endpoint
-
-POST /withdrawals
-
-
-Request Body
+{
+    "error": "404 Not Found"
+}
+```
+* POST /withdrawals
+```bash
+# Request Body
 
 {
   "author_id": 1,
-  "amount": 2000
+  "amount": 1000
+}
+```
+```bash
+# Use Case
+# Allows an author to withdraw money from their royalty balance.
+
+# Business Rules
+# If withdrawal amount is less than: ₹500
+{
+    "error": "Minimum withdrawal amount is ₹500"
 }
 
+# If withdrawal amount is greater than current_balance 
+{
+    "error": "Insufficient balance"
+}
 
-Use Case
-Allows an author to withdraw money from their royalty balance.
+# if author does not exist
+{
+    "error": "Author not found."
+}
 
-Business Rules
+# Success
+{
+    "amount": 1000,
+    "author_id": 1,
+    "id": 3,
+    "new_balance": 1825,
+    "status": "pending"
+}
 
-Minimum withdrawal: ₹500
-
-Cannot exceed current balance
-
-Author must exist
-
-Success
-
-Withdrawal status = pending
-
-Balance updated
-
-Returns new balance
-
-HTTP 201
-
-🔹 Get Withdrawal History
-
-Endpoint
-
-GET /authors/{id}/withdrawals
+```
+* GET /authors/{id}/withdrawals
+```bash
+# Use Case
+# View all withdrawal requests made by an author.
 
 
-Use Case
-View all withdrawal requests made by an author.
-
-Fields
-
-id
-
-amount
-
-status
-
-created_at
+# Response Fields
+[
+    {
+        "amount": 1000,
+        "created_at": "2026-02-07 13:04:05",
+        "id": 3,
+        "status": "pending"
+    },
+    {
+        "amount": 500,
+        "created_at": "2026-02-07 12:05:19",
+        "id": 2,
+        "status": "pending"
+    },
+    {
+        "amount": 500,
+        "created_at": "2026-02-07 11:59:51",
+        "id": 1,
+        "status": "pending"
+    }
+]
+```
