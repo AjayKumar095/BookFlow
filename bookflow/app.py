@@ -105,7 +105,58 @@ def get_author_sales(author_id):
     
     except Exception:
         return jsonify({"error": str("404 Not Found")}), 404  
-            
+
+@app.route("/withdrawals", methods=["POST"])
+def create_withdrawal():
+    data = request.json
+
+    author_id = data.get("author_id")
+    amount = data.get("amount")
+
+    # Validate author
+    author = Author.query.get(author_id)
+    if not author:
+        return jsonify({"error": "Author not found"}), 404
+
+    # Validate minimum amount
+    if amount < 500:
+        return jsonify({"error": "Minimum withdrawal amount is ₹500"}), 400
+
+    # Calculate earnings
+    books = Book.query.filter_by(author_id=author.id).all()
+    total_earnings = 0
+    for book in books:
+        sales = Sale.query.filter_by(book_id=book.id).all()
+        total_earnings += sum(s.quantity for s in sales) * book.royalty_per_sale
+
+    # Calculate current balance
+    withdrawals = Withdrawal.query.filter_by(author_id=author.id).all()
+    withdrawn_amount = sum(w.amount for w in withdrawals)
+    current_balance = total_earnings - withdrawn_amount
+
+    # Validate balance
+    if amount > current_balance:
+        return jsonify({"error": "Insufficient balance"}), 400
+
+    # Create withdrawal
+    withdrawal = Withdrawal(
+        author_id=author.id,
+        amount=amount,
+        status="pending",
+        created_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    )
+
+    db.session.add(withdrawal)
+    db.session.commit()
+
+    return jsonify({
+        "id": withdrawal.id,
+        "author_id": author.id,
+        "amount": amount,
+        "status": "pending",
+        "new_balance": current_balance - amount
+    }), 201
+          
 
 if __name__ == '__main__':
     app.run(debug=True)
