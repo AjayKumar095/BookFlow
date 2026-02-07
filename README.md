@@ -46,6 +46,37 @@ This project simulates a real-world **author royalty and payout system** used in
 - **Deployment**: Render (Free Tier)
 - **Architecture**: Modular MVC-style structure
 
+
+---
+### Why this stack:
+Flask is a lightweight and flexible backend framework that is well-suited for building clean, fast, and scalable REST APIs. SQLite allows quick setup without external dependencies, making it ideal for assignments and prototypes. Flask-SQLAlchemy simplifies database interactions while maintaining clean data models. Gunicorn and Render together provide a simple and production-like deployment environment.
+
+---
+### Reason for Choosing This Approach
+
+I chose Flask because I have prior hands-on experience working with this framework in production-level projects. Flask’s lightweight nature makes it ideal for small, smart, and quickly deployable web applications.
+I have also previously deployed projects using Render, which allowed me to confidently set up the application with a live base URL and proper production server configuration. Overall, this stack enables rapid development while still following clean architectural and coding practices.
+
+---
+### Assumptions Made
+
+* Each author has a wallet balance calculated by the royalty of the book.
+
+* Royalties are calculated per book sale based on royalty rates.
+
+* Minimum withdrawal amount is 500, and sufficient balance checks are enforced.
+
+* SQLite is sufficient for this assignment’s scale and usage.
+
+* Authentication is not included, as the focus is on business logic and API design.
+
+---
+### Time Spent
+
+* Total time spent: Approximately 5 hours
+
+This includes API design, database modeling, business logic implementation, validation handling, testing, documentation, and deployment.
+
 ---
 
 ## 📁 Project Structure
