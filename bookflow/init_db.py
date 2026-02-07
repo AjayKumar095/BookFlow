@@ -1,6 +1,4 @@
-from app import app
 from models import db
 
-with app.app_context():
+def init_db():
     db.create_all()
-    print("Database initialized successfully!")

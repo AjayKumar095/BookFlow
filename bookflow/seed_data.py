@@ -1,7 +1,8 @@
-from app import app 
 from models import db, Author, Book, Sale, Withdrawal
 
-with app.app_context():
+def seed_data():
+    if Author.query.first():
+        return
     
     
     ## Add authors
@@ -68,4 +69,4 @@ with app.app_context():
     db.session.add_all(sales_data)
     db.session.commit()
 
-    print("Seed data inserted successfully! 🌱")
+   

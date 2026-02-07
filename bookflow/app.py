@@ -4,10 +4,21 @@ from flask_cors import CORS
 from config import Config
 from models import db, Author, Book, Sale, Withdrawal
 
+## Set up flask app 
 app = Flask(__name__)
 app.config.from_object(Config)
-CORS(app)  # Enable CORS for all routes
+CORS(app)
 db.init_app(app)
+
+# INIT DB + SEED DATA
+with app.app_context():
+    from init_db import init_db
+    from seed_data import seed_data
+
+    init_db()
+    seed_data()
+    
+## API Endpoints
 
 @app.route('/')
 def home():
