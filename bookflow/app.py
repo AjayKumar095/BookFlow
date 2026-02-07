@@ -156,6 +156,27 @@ def create_withdrawal():
         "status": "pending",
         "new_balance": current_balance - amount
     }), 201
+
+@app.route("/authors/<int:author_id>/withdrawals", methods=["GET"])
+def get_author_withdrawals(author_id):
+    author = Author.query.get(author_id)
+
+    if not author:
+        return jsonify({"error": "Author not found"}), 404
+
+    withdrawals = Withdrawal.query.filter_by(author_id=author.id)\
+        .order_by(Withdrawal.created_at.desc()).all()
+
+    result = []
+    for w in withdrawals:
+        result.append({
+            "id": w.id,
+            "amount": w.amount,
+            "status": w.status,
+            "created_at": w.created_at
+        })
+
+    return jsonify(result), 200
           
 
 if __name__ == '__main__':
