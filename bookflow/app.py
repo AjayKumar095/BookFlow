@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from datetime import datetime
 from flask_cors import CORS
 from bookflow.config import Config
@@ -22,7 +22,12 @@ with app.app_context():
 
 @app.route('/')
 def home():
-    return 'Welcome to BookFlow!'
+    try:
+        return render_template('index.html')
+    except Exception:
+        return "Wellcome to BookFlow API! Use the endpoints to manage authors, books, sales, and withdrawals.", 200
+    
+    
 
 
 @app.route('/authors', methods=["GET"])
