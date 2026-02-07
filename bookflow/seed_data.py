@@ -1,4 +1,4 @@
-from models import db, Author, Book, Sale, Withdrawal
+from bookflow.models import db, Author, Book, Sale, Withdrawal
 
 def seed_data():
     if Author.query.first():

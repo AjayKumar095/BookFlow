@@ -12,8 +12,8 @@ db.init_app(app)
 
 # INIT DB + SEED DATA
 with app.app_context():
-    from init_db import init_db
-    from seed_data import seed_data
+    from bookflow.init_db import init_db
+    from bookflow.seed_data import seed_data
 
     init_db()
     seed_data()
