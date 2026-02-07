@@ -34,7 +34,7 @@ class Book(db.Model):
 
     id = db.Column(db.Integer, primary_key=True) # Primary key
     title = db.Column(db.String(200), nullable=False) # Title of the book
-    
+    royalty_per_sale = db.Column(db.Integer, nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('authors.id'), nullable=False) # Foreign key to the Author model
     sales = db.relationship('Sale', backref='book', lazy=True) # Relationship to the Sale model
     
@@ -45,7 +45,7 @@ class Sale(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)  # Primary key
     book_id = db.Column(db.Integer, db.ForeignKey("books.id"), nullable=False) # book id
-
+ 
     quantity = db.Column(db.Integer, nullable=False) # Quantity of books sold
     sale_date = db.Column(db.String(20), nullable=False) # sale date of the book
 
